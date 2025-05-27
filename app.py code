@@ -1,0 +1,58 @@
+#app.py code snippet
+import streamlit as st
+import pandas as pd
+import folium
+from streamlit_folium import st_folium
+import os
+
+# Paths to the map files and summary file
+map_file_1 = '/content/crime_map_34.074744_74.820444.html'
+map_file_2 = '/content/crime_map_34.315808_74.229248.html'
+summary_file = '/content/crime_summary_with_metrics.csv'
+
+# Title for the web app
+st.title('Crime Monitoring System')
+st.subheader('There has been a suspicious activity tracked at this particualar locations:')
+# Button to display the map for first location
+if st.button('Display Map 1'):
+    st.subheader('Crime Location and Safe Path Map - Location 1')
+
+    # Load and display the first map using folium's IFrame inside Streamlit
+    try:
+        # Check if the file exists
+        if os.path.exists(map_file_1):
+            # Load the map HTML as an IFrame
+            st.components.v1.html(open(map_file_1, 'r').read(), height=500)
+        else:
+            st.error("Map file 1 not found. Please check the file path.")
+    except Exception as e:
+        st.error(f"Error loading the map 1: {e}")
+
+# Button to display the map for second location
+if st.button('Display Map 2'):
+    st.subheader('Crime Location and Safe Path Map - Location 2')
+
+    # Load and display the second map using folium's IFrame inside Streamlit
+    try:
+        # Check if the file exists
+        if os.path.exists(map_file_2):
+            # Load the map HTML as an IFrame
+            st.components.v1.html(open(map_file_2, 'r').read(), height=500)
+        else:
+            st.error("Map file 2 not found. Please check the file path.")
+    except Exception as e:
+        st.error(f"Error loading the map 2: {e}")
+
+# Button to display the tabular summary
+if st.button('Display Tabular Output'):
+    st.subheader('Crime Summary Table')
+
+    # Load the CSV file and display the summary
+    try:
+        if os.path.exists(summary_file):
+            crime_summary = pd.read_csv(summary_file)
+            st.write(crime_summary)
+        else:
+            st.error("Crime summary file not found. Please check the file path.")
+    except Exception as e:
+        st.error(f"Error loading the summary: {e}")

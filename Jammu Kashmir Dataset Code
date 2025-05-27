@@ -1,0 +1,33 @@
+import osmnx as ox
+import geopandas as gpd
+import pandas as pd
+
+# Define the place (Jammu and Kashmir) for which data will be downloaded
+place_name = "Jammu and Kashmir, India"
+
+# Step 1: Download Points of Interest (Schools, Hospitals, Police Stations)
+pois = ox.geometries_from_place(place_name, tags={'amenity': ['school', 'hospital', 'police']})
+
+# Step 2: Download roads
+roads = ox.graph_from_place(place_name, network_type='all')
+roads_gdf = ox.graph_to_gdfs(roads, nodes=False, edges=True)
+
+# Step 3: Download natural features (Rivers, Lakes, Mountains)
+natural_features = ox.geometries_from_place(place_name, tags={'natural': ['water', 'mountain', 'river']})
+
+# Step 4: Download land use information (e.g., snowy areas)
+land_use = ox.geometries_from_place(place_name, tags={'landuse': True})
+
+# Convert all dataframes into pandas DataFrames and merge them
+pois_df = pois[['amenity', 'geometry']].reset_index()
+roads_df = roads_gdf[['highway', 'geometry']].reset_index()
+natural_features_df = natural_features[['natural', 'geometry']].reset_index()
+land_use_df = land_use[['landuse', 'geometry']].reset_index()
+
+# Step 5: Combine all datasets
+combined_df = pd.concat([pois_df, roads_df, natural_features_df, land_use_df])
+
+# Save the combined data to CSV
+combined_df.to_csv('jammu_kashmir_geospatial_data.csv', index=False)
+
+print("Geospatial dataset for Jammu and Kashmir has been generated.")
